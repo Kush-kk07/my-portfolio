@@ -16,8 +16,8 @@ export default function App() {
       <header className="p-4 flex justify-between items-center">
         <h1 className="text-3xl font-bold">Kushal Kumar K</h1>
         <a
-          href="https://example.com/resume.pdf"
-          className="px-4 py-2 bg-white text-black rounded-2xl shadow-lg"
+          href="/resume.pdf" 
+          className="px-4 py-2 bg-white text-black rounded-2xl shadow-lg hover:bg-gray-200 transition"
           target="_blank"
           rel="noopener noreferrer"
         >
