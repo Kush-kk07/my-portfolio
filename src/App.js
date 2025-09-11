@@ -2,6 +2,14 @@ import React from "react";
 import styled, { createGlobalStyle, keyframes } from "styled-components";
 import { useInView } from "react-intersection-observer";
 import { Typewriter } from "react-simple-typewriter";
+import {
+  UserCircle,
+  GraduationCap,
+  Briefcase,
+  FolderCode,
+  Cpu,
+  Mail,
+} from "lucide-react";
 
 /* 🌐 Global Styles */
 const GlobalStyle = createGlobalStyle`
@@ -18,7 +26,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-/* 🔹 Background Grid with Glow */
+/* Background + Animations (same as before) */
 const Background = styled.div`
   position: fixed;
   inset: 0;
@@ -37,12 +45,10 @@ const Background = styled.div`
   }
 `;
 
-/* Animations */
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
 `;
-
 const slideIn = keyframes`
   from { opacity: 0; transform: translateX(-40px); }
   to { opacity: 1; transform: translateX(0); }
@@ -82,36 +88,51 @@ const GradientTitle = styled.h1`
   font-weight: 700;
 `;
 
-/* Hero */
+/* Section Titles with Icons */
+const SectionTitle = styled.h2`
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #3b82f6, #9333ea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+`;
+
+/* Rest (Hero, ProfilePhoto, Cards etc.) same as before */
 const Hero = styled.section`
   height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 2rem;
+  align-items: flex-start;
+  padding: 2rem 5%;
   position: relative;
+`;
+
+const HeroRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 `;
 
 const HeroIntro = styled.p`
   font-size: 1.3rem;
   color: #9ca3af;
-  margin-bottom: 0.5rem;
 `;
 
 const HeroTitle = styled.h1`
   font-size: 3.5rem;
   font-weight: 800;
-  margin-top: 0.5rem;
+  margin: 0;
   background: linear-gradient(90deg, #3b82f6, #9333ea);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-family: "Poppins", sans-serif;
-
-  @media (min-width: 768px) {
-    font-size: 4.5rem;
-  }
 `;
 
 const HeroSubtitle = styled.h3`
@@ -128,45 +149,42 @@ const HeroSummary = styled.p`
   line-height: 1.6;
 `;
 
-/* Profile Photo */
 const ProfilePhoto = styled.img`
   position: absolute;
   top: 90px;
   right: 50px;
-  width: 170px;
-  height: 170px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
   border: 4px solid #3b82f6;
   object-fit: cover;
   box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-
-  @media (max-width: 768px) {
-    position: static;
-    margin-top: 1.5rem;
-    width: 140px;
-    height: 140px;
-  }
 `;
 
-/* Section */
-const SectionTitle = styled.h2`
-  font-size: 2.2rem;
-  text-align: center;
-  margin-bottom: 2rem;
-  font-weight: bold;
-  background: linear-gradient(90deg, #3b82f6, #9333ea);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* Layout Boxes */
+const AboutAchievementsRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
+`;
+
+const Box = styled.div`
+  background: linear-gradient(145deg, #1e293b, #111827);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
 `;
 
 /* Cards */
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-
+  grid-template-columns: 1fr;
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -174,12 +192,10 @@ const Grid = styled.div`
 
 const Card = styled.div`
   background: linear-gradient(145deg, #1e293b, #111827);
-  color: white;
   padding: 2rem;
   border-radius: 20px;
   box-shadow: 0 6px 16px rgba(0,0,0,0.5);
   transition: all 0.3s ease-in-out;
-
   &:hover {
     transform: translateY(-10px);
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
@@ -198,7 +214,6 @@ const Footer = styled.footer`
   text-align: center;
   border-top: 1px solid #1f2937;
   color: #9ca3af;
-  font-size: 0.9rem;
 `;
 
 const Divider = styled.hr`
@@ -209,6 +224,7 @@ const Divider = styled.hr`
   max-width: 800px;
 `;
 
+/* ================= MAIN APP ================= */
 export default function App() {
   const [aboutRef, aboutInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [eduRef, eduInView] = useInView({ triggerOnce: true, threshold: 0.2 });
@@ -232,29 +248,18 @@ export default function App() {
           <a href="#projects">Projects</a>
           <a href="#skills">Skills</a>
           <a href="#contact">Contact</a>
-          <a
-            href="/resume.pdf"
-            download
-            style={{
-              background: "#3b82f6",
-              padding: "0.5rem 1rem",
-              borderRadius: "8px",
-              fontWeight: "bold",
-              color: "white",
-            }}
-          >
-            Resume
-          </a>
+          <a href="/resume.pdf" download style={{background:"#3b82f6",padding:"0.5rem 1rem",borderRadius:"8px",fontWeight:"bold"}}>Resume</a>
         </div>
       </Navbar>
 
       {/* Hero */}
       <Hero id="home">
         <AnimatedHeroText>
-          <HeroIntro>Hi, I'm</HeroIntro>
-          <HeroTitle>Kushal Kumar K</HeroTitle>
+          <HeroRow>
+            <HeroIntro>Hi, I'm</HeroIntro>
+            <HeroTitle>Kushal Kumar K</HeroTitle>
+          </HeroRow>
 
-          {/* 🔹 Typing Animation */}
           <HeroSubtitle>
             <Typewriter
               words={[
@@ -263,7 +268,7 @@ export default function App() {
                 "Automation & Scripting",
                 "IT Infrastructure Engineer",
               ]}
-              loop={true}
+              loop
               cursor
               cursorStyle="|"
               typeSpeed={70}
@@ -272,48 +277,44 @@ export default function App() {
             />
           </HeroSubtitle>
 
-          {/* 🔹 2-line summary */}
           <HeroSummary>
-            Experienced IT Infrastructure Engineer with a strong background in
-            server administration, cloud operations, and automation.  
-            Passionate about building secure, scalable, and efficient IT systems.
+            Experienced IT Infrastructure Engineer with expertise in server
+            administration, cloud operations, and automation. Passionate about
+            secure, scalable, and efficient IT systems.
           </HeroSummary>
-
-          <a
-            href="/resume.pdf"
-            download
-            style={{
-              display: "inline-block",
-              marginTop: "2rem",
-              background: "#3b82f6",
-              padding: "0.7rem 1.5rem",
-              borderRadius: "10px",
-              color: "white",
-              fontWeight: "bold",
-            }}
-          >
-            Download Resume
-          </a>
         </AnimatedHeroText>
 
-        {/* 🔹 Profile Photo */}
         <ProfilePhoto src="/profile.jpg" alt="Profile" />
       </Hero>
 
-      {/* Sections (same as before, with GradientTitle in headers) */}
+      {/* About + Achievements */}
       <AnimatedSection id="about" ref={aboutRef} animate={aboutInView}>
-        <SectionTitle>About Me</SectionTitle>
-        <p style={{ maxWidth: "800px", margin: "0 auto", lineHeight: "1.6", fontSize: "1.1rem", color: "#d1d5db" }}>
-          IT Infrastructure Engineer with 5 years of experience in managing enterprise systems across Windows,
-          Linux, and cloud environments. Proficient in server administration, networking, virtualization, and
-          automation, with expertise in Active Directory, DNS, DHCP, Hyper-V, and Azure. Skilled in shell
-          scripting and process optimization to enhance system reliability, security, and efficiency.
-        </p>
+        <SectionTitle><UserCircle size={28}/> About Me & Key Achievements</SectionTitle>
+        <AboutAchievementsRow>
+          <Box>
+            <h3>About Me</h3>
+            <p>
+              IT Infrastructure Engineer with 5 years of experience across Windows,
+              Linux, and cloud environments. Skilled in Active Directory, DNS, DHCP,
+              Hyper-V, Azure, and automation scripting to improve efficiency.
+            </p>
+          </Box>
+          <Box>
+            <h3>Key Achievements</h3>
+            <ul>
+              <li>Automated administrative tasks using shell scripting, reducing manual effort by 30%.</li>
+              <li>Achieved 99.9% server uptime through proactive monitoring and patching.</li>
+              <li>Assisted in migration of infrastructure services to Azure, improving scalability.</li>
+              <li>Enhanced IT security posture with system hardening and backup strategies.</li>
+              <li>Improved end-user satisfaction by reducing resolution time by 25%.</li>
+            </ul>
+          </Box>
+        </AboutAchievementsRow>
       </AnimatedSection>
 
       {/* Education */}
       <AnimatedSection id="education" ref={eduRef} animate={eduInView}>
-        <SectionTitle>Education</SectionTitle>
+        <SectionTitle><GraduationCap size={28}/> Education</SectionTitle>
         <Grid>
           <Card>
             <CardTitle>B.E. in Electronics & Communication Engineering</CardTitle>
@@ -332,7 +333,7 @@ export default function App() {
 
       {/* Experience */}
       <AnimatedSection id="experience" ref={expRef} animate={expInView}>
-        <SectionTitle>Experience</SectionTitle>
+        <SectionTitle><Briefcase size={28}/> Experience</SectionTitle>
         <Card>
           <CardTitle>L&T Technology Services (LTTS), Bangalore | Jan 2021 – Present</CardTitle>
           <ul>
@@ -350,7 +351,7 @@ export default function App() {
 
       {/* Projects */}
       <AnimatedSection id="projects" ref={projectsRef} animate={projectsInView}>
-        <SectionTitle>Projects</SectionTitle>
+        <SectionTitle><FolderCode size={28}/> Projects</SectionTitle>
         <Grid>
           <Card>
             <CardTitle>Server Automation Script</CardTitle>
@@ -365,47 +366,33 @@ export default function App() {
 
       {/* Skills */}
       <AnimatedSection id="skills" ref={skillsRef} animate={skillsInView}>
-        <SectionTitle>Technical Skills</SectionTitle>
+        <SectionTitle><Cpu size={28}/> Technical Skills</SectionTitle>
         <Grid>
           <Card>
             <CardTitle>Server & Systems</CardTitle>
-            <ul>
-              <li>Active Directory</li>
-              <li>Windows/Linux Admin</li>
-              <li>Hyper-V</li>
-            </ul>
+            <ul><li>Active Directory</li><li>Windows/Linux Admin</li><li>Hyper-V</li></ul>
           </Card>
           <Card>
             <CardTitle>Networking</CardTitle>
-            <ul>
-              <li>DHCP</li>
-              <li>DNS</li>
-              <li>LAN/WAN</li>
-            </ul>
+            <ul><li>DHCP</li><li>DNS</li><li>LAN/WAN</li></ul>
           </Card>
           <Card>
             <CardTitle>Cloud</CardTitle>
-            <ul>
-              <li>Microsoft Azure</li>
-            </ul>
+            <ul><li>Microsoft Azure</li><li>Microsoft Intune</li><li>Microsoft Exchange Admin Centre</li></ul>
           </Card>
           <Card>
             <CardTitle>Scripting</CardTitle>
-            <ul>
-              <li>Shell Scripts</li>
-              <li>Automation</li>
-            </ul>
+            <ul><li>Shell Scripts</li><li>Python</li><li>Automation</li></ul>
           </Card>
         </Grid>
       </AnimatedSection>
 
-      {/* Contact & Footer */}
+      {/* Contact */}
       <Footer id="contact">
-        <h2>Get in Touch</h2>
+        <SectionTitle><Mail size={28}/> Get in Touch</SectionTitle>
         <p>📧 <a href="mailto:kushalkumark6569@gmail.com">kushalkumark6569@gmail.com</a></p>
         <p>💻 <a href="https://github.com/Kush-kk07">github.com/Kush-kk07</a></p>
         <p>🔗 <a href="https://linkedin.com/in/yourlinkedin">linkedin.com/in/yourlinkedin</a></p>
-        
         <Divider />
         <p>© {new Date().getFullYear()} Kushal Kumar K. All rights reserved.</p>
       </Footer>
