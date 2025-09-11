@@ -1,121 +1,414 @@
-import React, { useState } from "react";
+import React from "react";
+import styled, { createGlobalStyle, keyframes } from "styled-components";
+import { useInView } from "react-intersection-observer";
+import { Typewriter } from "react-simple-typewriter";
+
+/* 🌐 Global Styles */
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+`;
+
+/* 🔹 Background Grid with Glow */
+const Background = styled.div`
+  position: fixed;
+  inset: 0;
+  background: #0f172a;
+  z-index: -1;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(transparent 95%, rgba(255,255,255,0.07) 95%),
+                      linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.07) 95%);
+    background-size: 40px 40px;
+    box-shadow: inset 0 0 80px rgba(59, 130, 246, 0.2),
+                inset 0 0 120px rgba(99, 102, 241, 0.15);
+  }
+`;
+
+/* Animations */
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const slideIn = keyframes`
+  from { opacity: 0; transform: translateX(-40px); }
+  to { opacity: 1; transform: translateX(0); }
+`;
+
+const AnimatedSection = styled.section`
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease-in-out;
+  animation: ${(props) => props.animate && fadeIn} 0.8s forwards;
+`;
+
+const AnimatedHeroText = styled.div`
+  opacity: 0;
+  transform: translateX(-40px);
+  animation: ${slideIn} 1s ease-out forwards;
+`;
+
+/* Navbar */
+const Navbar = styled.nav`
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(6px);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+`;
+
+const GradientTitle = styled.h1`
+  background: linear-gradient(90deg, #3b82f6, #9333ea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+`;
+
+/* Hero */
+const Hero = styled.section`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+`;
+
+const HeroIntro = styled.p`
+  font-size: 1.3rem;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+`;
+
+const HeroTitle = styled.h1`
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-top: 0.5rem;
+  background: linear-gradient(90deg, #3b82f6, #9333ea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "Poppins", sans-serif;
+
+  @media (min-width: 768px) {
+    font-size: 4.5rem;
+  }
+`;
+
+const HeroSubtitle = styled.h3`
+  margin-top: 1rem;
+  font-size: 1.4rem;
+  color: #d1d5db;
+`;
+
+const HeroSummary = styled.p`
+  margin-top: 1.2rem;
+  font-size: 1.1rem;
+  color: #9ca3af;
+  max-width: 600px;
+  line-height: 1.6;
+`;
+
+/* Profile Photo */
+const ProfilePhoto = styled.img`
+  position: absolute;
+  top: 90px;
+  right: 50px;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  border: 4px solid #3b82f6;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+
+  @media (max-width: 768px) {
+    position: static;
+    margin-top: 1.5rem;
+    width: 140px;
+    height: 140px;
+  }
+`;
+
+/* Section */
+const SectionTitle = styled.h2`
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #3b82f6, #9333ea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
+/* Cards */
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+`;
+
+const Card = styled.div`
+  background: linear-gradient(145deg, #1e293b, #111827);
+  color: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  }
+`;
+
+const CardTitle = styled.h3`
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+`;
+
+/* Footer */
+const Footer = styled.footer`
+  padding: 3rem 1rem;
+  background: black;
+  text-align: center;
+  border-top: 1px solid #1f2937;
+  color: #9ca3af;
+  font-size: 0.9rem;
+`;
+
+const Divider = styled.hr`
+  border: none;
+  height: 1px;
+  background: #374151;
+  margin: 2rem auto;
+  max-width: 800px;
+`;
 
 export default function App() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [aboutRef, aboutInView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [eduRef, eduInView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [expRef, expInView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [projectsRef, projectsInView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [skillsRef, skillsInView] = useInView({ triggerOnce: true, threshold: 0.2 });
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans">
+    <>
+      <GlobalStyle />
+      <Background />
+
       {/* Navbar */}
-      <nav className="bg-gray-900 p-4 flex justify-between items-center sticky top-0 z-50 shadow-md">
-        <h1 className="text-2xl font-bold">Kushal Kumar K</h1>
-        <div className="hidden md:flex space-x-6">
-          <a href="#home" className="hover:text-blue-400">Home</a>
-          <a href="#about" className="hover:text-blue-400">About</a>
-          <a href="#summary" className="hover:text-blue-400">Summary</a>
-          <a href="#projects" className="hover:text-blue-400">Projects</a>
-          <a href="#skills" className="hover:text-blue-400">Skills</a>
-          <a href="#contact" className="hover:text-blue-400">Contact</a>
+      <Navbar>
+        <GradientTitle>Kushal Kumar K</GradientTitle>
+        <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#education">Education</a>
+          <a href="#experience">Experience</a>
+          <a href="#projects">Projects</a>
+          <a href="#skills">Skills</a>
+          <a href="#contact">Contact</a>
           <a
             href="/resume.pdf"
-            className="px-3 py-1 bg-white text-black rounded-lg shadow hover:bg-gray-200 transition"
-            target="_blank"
-            rel="noopener noreferrer"
             download
+            style={{
+              background: "#3b82f6",
+              padding: "0.5rem 1rem",
+              borderRadius: "8px",
+              fontWeight: "bold",
+              color: "white",
+            }}
           >
             Resume
           </a>
         </div>
-        <button className="md:hidden focus:outline-none" onClick={() => setMenuOpen(!menuOpen)}>
-          <span className="text-2xl">☰</span>
-        </button>
-      </nav>
+      </Navbar>
 
-      {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="md:hidden bg-gray-800 p-4 space-y-4 text-center">
-          {["home","about","summary","projects","skills","contact"].map(id => (
-            <a
-              key={id}
-              href={`#${id}`}
-              className="block hover:text-blue-400 transition"
-              onClick={() => setMenuOpen(false)}
-            >
-              {id.charAt(0).toUpperCase() + id.slice(1)}
-            </a>
-          ))}
-        </div>
-      )}
+      {/* Hero */}
+      <Hero id="home">
+        <AnimatedHeroText>
+          <HeroIntro>Hi, I'm</HeroIntro>
+          <HeroTitle>Kushal Kumar K</HeroTitle>
 
-      {/* Home / Hero */}
-      <section id="home" className="h-screen flex flex-col justify-center items-center text-center px-6">
-        <h2 className="text-xl text-gray-400">Welcome to my Portfolio</h2>
-        <h1 className="text-5xl font-bold mt-4">Kushal Kumar K</h1>
-        <p className="text-xl mt-4 text-gray-300 max-w-2xl">
-          IT Infrastructure Engineer with 5+ years of experience in automation,
-          virtualization, cloud and enterprise systems management.
+          {/* 🔹 Typing Animation */}
+          <HeroSubtitle>
+            <Typewriter
+              words={[
+                "System Administrator",
+                "Cloud & Infra Specialist",
+                "Automation & Scripting",
+                "IT Infrastructure Engineer",
+              ]}
+              loop={true}
+              cursor
+              cursorStyle="|"
+              typeSpeed={70}
+              deleteSpeed={50}
+              delaySpeed={1500}
+            />
+          </HeroSubtitle>
+
+          {/* 🔹 2-line summary */}
+          <HeroSummary>
+            Experienced IT Infrastructure Engineer with a strong background in
+            server administration, cloud operations, and automation.  
+            Passionate about building secure, scalable, and efficient IT systems.
+          </HeroSummary>
+
+          <a
+            href="/resume.pdf"
+            download
+            style={{
+              display: "inline-block",
+              marginTop: "2rem",
+              background: "#3b82f6",
+              padding: "0.7rem 1.5rem",
+              borderRadius: "10px",
+              color: "white",
+              fontWeight: "bold",
+            }}
+          >
+            Download Resume
+          </a>
+        </AnimatedHeroText>
+
+        {/* 🔹 Profile Photo */}
+        <ProfilePhoto src="/profile.jpg" alt="Profile" />
+      </Hero>
+
+      {/* Sections (same as before, with GradientTitle in headers) */}
+      <AnimatedSection id="about" ref={aboutRef} animate={aboutInView}>
+        <SectionTitle>About Me</SectionTitle>
+        <p style={{ maxWidth: "800px", margin: "0 auto", lineHeight: "1.6", fontSize: "1.1rem", color: "#d1d5db" }}>
+          IT Infrastructure Engineer with 5 years of experience in managing enterprise systems across Windows,
+          Linux, and cloud environments. Proficient in server administration, networking, virtualization, and
+          automation, with expertise in Active Directory, DNS, DHCP, Hyper-V, and Azure. Skilled in shell
+          scripting and process optimization to enhance system reliability, security, and efficiency.
         </p>
-        <a
-          href="/resume.pdf"
-          className="mt-6 px-6 py-2 bg-blue-500 rounded-lg hover:bg-blue-600 transition"
-          download
-        >
-          Download Resume
-        </a>
-      </section>
+      </AnimatedSection>
 
-      {/* Professional Summary */}
-      <section id="summary" className="py-16 px-8 bg-gray-900">
-        <h2 className="text-3xl font-bold text-center mb-6">Professional Summary</h2>
-        <p className="max-w-4xl mx-auto text-gray-300 text-lg leading-relaxed">
-          IT Infrastructure Engineer with 5 years of experience in managing enterprise systems across
-          Windows, Linux, and cloud environments. Proficient in server administration, networking,
-          virtualization, and automation, with expertise in Active Directory, DNS, DHCP, Hyper-V, Azure.
-          Skilled in shell scripting and process optimization to enhance reliability, security, and efficiency.
-        </p>
-      </section>
+      {/* Education */}
+      <AnimatedSection id="education" ref={eduRef} animate={eduInView}>
+        <SectionTitle>Education</SectionTitle>
+        <Grid>
+          <Card>
+            <CardTitle>B.E. in Electronics & Communication Engineering</CardTitle>
+            <p>JSS Academy of Technical Education, Bangalore – CGPA: 7.6</p>
+          </Card>
+          <Card>
+            <CardTitle>Diploma in Electronics & Communication Engineering</CardTitle>
+            <p>Government Polytechnic College, Ramanagar – 76%</p>
+          </Card>
+          <Card>
+            <CardTitle>SSLC (10th Standard)</CardTitle>
+            <p>Balu Public School, Channapatna – 81%</p>
+          </Card>
+        </Grid>
+      </AnimatedSection>
+
+      {/* Experience */}
+      <AnimatedSection id="experience" ref={expRef} animate={expInView}>
+        <SectionTitle>Experience</SectionTitle>
+        <Card>
+          <CardTitle>L&T Technology Services (LTTS), Bangalore | Jan 2021 – Present</CardTitle>
+          <ul>
+            <li>Installed, configured, patched, and maintained Windows and Linux servers.</li>
+            <li>Managed Active Directory, DNS, DHCP, and Group Policies.</li>
+            <li>Deployed and optimized virtual machines in Hyper-V.</li>
+            <li>Troubleshot LAN/WAN issues and supported firewall operations.</li>
+            <li>Implemented backup & disaster recovery solutions.</li>
+            <li>Strengthened security through hardening & patching.</li>
+            <li>Supported Azure VM provisioning, storage, and networking.</li>
+            <li>Automated tasks using shell scripting.</li>
+          </ul>
+        </Card>
+      </AnimatedSection>
 
       {/* Projects */}
-      <section id="projects" className="py-16 px-8">
-        <h2 className="text-3xl font-bold text-center mb-12">Projects</h2>
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          <div className="bg-white text-black p-6 rounded-2xl shadow-lg hover:shadow-2xl transition">
-            <h3 className="text-xl font-semibold">Server Automation Script</h3>
-            <p className="mt-2">Automated server patching & restarts across 50+ nodes using PowerShell.</p>
-          </div>
-          <div className="bg-white text-black p-6 rounded-2xl shadow-lg hover:shadow-2xl transition">
-            <h3 className="text-xl font-semibold">Cloud Infra Setup</h3>
-            <p className="mt-2">Built scalable infrastructure on Azure including VMs, storage, and networking.</p>
-          </div>
-        </div>
-      </section>
+      <AnimatedSection id="projects" ref={projectsRef} animate={projectsInView}>
+        <SectionTitle>Projects</SectionTitle>
+        <Grid>
+          <Card>
+            <CardTitle>Server Automation Script</CardTitle>
+            <p>Automated server patching & restarts across 50+ nodes using PowerShell.</p>
+          </Card>
+          <Card>
+            <CardTitle>Cloud Infra Setup</CardTitle>
+            <p>Built scalable infrastructure on Azure including VMs, storage, and networking.</p>
+          </Card>
+        </Grid>
+      </AnimatedSection>
 
       {/* Skills */}
-      <section id="skills" className="py-16 px-8 bg-gray-900">
-        <h2 className="text-3xl font-bold text-center mb-12">Technical Skills</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {[
-            { title: "Server & Systems", items: ["Active Directory", "Windows/Linux Admin", "Hyper-V"] },
-            { title: "Networking", items: ["DHCP", "DNS", "LAN/WAN"] },
-            { title: "Cloud", items: ["Microsoft Azure"] },
-            { title: "Scripting", items: ["Shell Scripts", "Automation"] },
-          ].map(group => (
-            <div key={group.title} className="bg-white text-black p-6 rounded-2xl shadow-lg">
-              <h3 className="text-xl font-semibold mb-4">{group.title}</h3>
-              <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                {group.items.map(item => <li key={item}>{item}</li>)}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
+      <AnimatedSection id="skills" ref={skillsRef} animate={skillsInView}>
+        <SectionTitle>Technical Skills</SectionTitle>
+        <Grid>
+          <Card>
+            <CardTitle>Server & Systems</CardTitle>
+            <ul>
+              <li>Active Directory</li>
+              <li>Windows/Linux Admin</li>
+              <li>Hyper-V</li>
+            </ul>
+          </Card>
+          <Card>
+            <CardTitle>Networking</CardTitle>
+            <ul>
+              <li>DHCP</li>
+              <li>DNS</li>
+              <li>LAN/WAN</li>
+            </ul>
+          </Card>
+          <Card>
+            <CardTitle>Cloud</CardTitle>
+            <ul>
+              <li>Microsoft Azure</li>
+            </ul>
+          </Card>
+          <Card>
+            <CardTitle>Scripting</CardTitle>
+            <ul>
+              <li>Shell Scripts</li>
+              <li>Automation</li>
+            </ul>
+          </Card>
+        </Grid>
+      </AnimatedSection>
 
-      {/* Contact */}
-      <footer id="contact" className="py-12 bg-black text-center border-t border-gray-800">
-        <h2 className="text-2xl font-bold mb-4">Get in Touch</h2>
-        <p>Email: <a href="mailto:kushalkumark6569@gmail.com" className="text-blue-400">kushalkumark6569@gmail.com</a></p>
-        <p>GitHub: <a href="https://github.com/Kush-kk07" className="text-blue-400">github.com/Kush-kk07</a></p>
-        <p>LinkedIn: <a href="https://linkedin.com/in/yourlinkedin" className="text-blue-400">linkedin.com/in/yourlinkedin</a></p>
-      </footer>
-    </div>
+      {/* Contact & Footer */}
+      <Footer id="contact">
+        <h2>Get in Touch</h2>
+        <p>📧 <a href="mailto:kushalkumark6569@gmail.com">kushalkumark6569@gmail.com</a></p>
+        <p>💻 <a href="https://github.com/Kush-kk07">github.com/Kush-kk07</a></p>
+        <p>🔗 <a href="https://linkedin.com/in/yourlinkedin">linkedin.com/in/yourlinkedin</a></p>
+        
+        <Divider />
+        <p>© {new Date().getFullYear()} Kushal Kumar K. All rights reserved.</p>
+      </Footer>
+    </>
   );
 }
